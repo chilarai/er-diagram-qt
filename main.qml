@@ -94,6 +94,11 @@ Window {
             // This will listen for delete entity signals
 
             entityDeleteMap.get(counter).deleteEntitySignal.connect(mainWindow.deleteEntitySlot)
+
+            // Dynamically connect `entityRectangleMovedSignal` with `entityRectangleMovedSlot()`
+            // This will listen for move entity signals
+
+            entityRectangleMap.get(counter).entityRectangleMovedSignal.connect(mainWindow.entityRectangleMovedSlot)
         }
 
     }
@@ -143,6 +148,10 @@ Window {
     }
 
 
+
+    function entityRectangleMovedSlot(refObj, newFrontXCoord, newFrontYCoord){
+        console.log(refObj, newFrontXCoord, newFrontYCoord)
+    }
 
 
 
