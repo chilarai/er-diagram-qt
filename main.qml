@@ -43,7 +43,8 @@ Window {
         let prevEntityRectangleRearCoordinates = {x: 0, y: 0}
         let x1 = 0 // entityLine start point
         let x2 = 0 // entityLine end point
-        let y = 0
+        let y1 = 0
+        let y2 = 0
         let prevCounter = counter
 
         counter++
@@ -86,20 +87,23 @@ Window {
 
             x1 = prevEntityRectangleRearCoordinates.x
             x2 = frontEntityCoordinatesMap.get(counter).x
-            y = frontEntityCoordinatesMap.get(counter).y + entityRectangleHeight / 2
+            y1 = frontEntityCoordinatesMap.get(counter).y + entityRectangleHeight / 2
+            y2 = frontEntityCoordinatesMap.get(counter).y + entityRectangleHeight / 2
 
-            entityLineMap.set(counter, entityLine.createObject(mainWindow, {x1: x1, y1: y, x2: x2, y2: y, objectName : counter}))
+            entityLineMap.set(counter, entityLine.createObject(mainWindow, {x1: x1, y1: y1, x2: x2, y2: y2, objectName : counter}))
 
             // Dynamically connect `deleteEntitySignal` with `deleteEntitySlot()`
             // This will listen for delete entity signals
 
             entityDeleteMap.get(counter).deleteEntitySignal.connect(mainWindow.deleteEntitySlot)
 
-            // Dynamically connect `entityRectangleMovedSignal` with `entityRectangleMovedSlot()`
-            // This will listen for move entity signals
 
-            entityRectangleMap.get(counter).entityRectangleMovedSignal.connect(mainWindow.entityRectangleMovedSlot)
         }
+
+        // Dynamically connect `entityRectangleMovedSignal` with `entityRectangleMovedSlot()`
+        // This will listen for move entity signals
+
+        entityRectangleMap.get(counter).entityRectangleMovedSignal.connect(mainWindow.entityRectangleMovedSlot)
 
     }
 
@@ -149,8 +153,33 @@ Window {
 
 
 
+    // Update entityLines and entityDelete on receiving signal
+
     function entityRectangleMovedSlot(refObj, newFrontXCoord, newFrontYCoord){
-        console.log(refObj, newFrontXCoord, newFrontYCoord)
+
+        // Ignore the front lineEntity & deleteEntity for the first entityRectangle
+
+        if(refObj > 1){
+            entityDeleteMap.get(refObj).x = newFrontXCoord
+            entityDeleteMap.get(refObj).y = newFrontYCoord
+
+            entityLineMap.get(refObj).x2 = newFrontXCoord
+            entityLineMap.get(refObj).y2 = newFrontYCoord + entityRectangleHeight/2
+
+        }
+
+        // Ignore the rear lineEntity for the last entityRectangle
+
+        if(refObj < counter){
+            entityLineMap.get(refObj + 1).x1 = newFrontXCoord + entityRectangleWidth
+            entityLineMap.get(refObj + 1).y1 = newFrontYCoord + entityRectangleHeight/2
+        }
+
+        // Update front and rear coordinates of rectangleEntity
+        frontEntityCoordinatesMap.get(refObj).x = newFrontXCoord
+        frontEntityCoordinatesMap.get(refObj).y = newFrontYCoord
+        rearEntityCoordinatesMap.get(refObj).x = newFrontXCoord + entityRectangleWidth
+        rearEntityCoordinatesMap.get(refObj).y = newFrontYCoord
     }
 
 

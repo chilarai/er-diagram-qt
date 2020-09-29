@@ -23,6 +23,8 @@ Rectangle {
         anchors.fill: parent
         drag.target: entityRectangle
 
-        onPositionChanged: entityRectangleMovedSignal(entityRectangle.objectName, mouseX, mouseY)
+        onPositionChanged: {
+            entityRectangleMovedSignal(entityRectangle.objectName, entityRectangle.x, entityRectangle.y)
+        }
     }
 }

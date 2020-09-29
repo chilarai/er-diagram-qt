@@ -33,7 +33,7 @@ Item{
             PathLine {
                 id: secondRectCoord;
                 x: x1
-                y: y2
+                y: y1
             }
         }
     }
